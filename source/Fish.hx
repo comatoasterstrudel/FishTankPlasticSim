@@ -3,13 +3,24 @@ package;
 class Fish extends FlxSprite
 {
     var swimRange:Float = 0;
+	public var name:String = '';
     
     public function new(name:String, y:Float, swimRange:Float):Void{
         super();
         
-        loadGraphic('assets/images/fish/$name.png');
+		this.name = name;
+
+		if (Assets.exists('assets/images/fish/$name.png'))
+		{
+			loadGraphic('assets/images/fish/$name.png');
+		}
+		else
+		{
+			loadGraphic('assets/images/fish/funny.png');
+		}
         
-        setPosition((FlxG.random.float(FlxG.width / 2 - swimRange, FlxG.width / 2 + swimRange) - (width / 2)), y);
+		setPosition(FlxMath.bound((FlxG.random.float(FlxG.width / 2 - swimRange, FlxG.width / 2 + swimRange) - (width / 2)), 0, (FlxG.width - width)
+			- 100), y);
         
         startSwim();
     }
@@ -24,9 +35,12 @@ class Fish extends FlxSprite
             
             flipX = left;
 
-            var moveTo:Float = FlxMath.bound(x + (left ? FlxG.random.float(-100, -10) : FlxG.random.float(10, 100)), 0, FlxG.width - width);
+			var moveTo:Float = FlxMath.bound(x + (left ? FlxG.random.float(-100, -10) : FlxG.random.float(10, 100)), 0, (FlxG.width - width) - 100);
                     
-            FlxTween.tween(this, {x: moveTo}, FlxG.random.float(1, 4), {onComplete: function(f):Void{
+			FlxTween.tween(this, {x: moveTo}, FlxG.random.float(1, 4), {
+				ease: FlxEase.cubeInOut,
+				onComplete: function(f):Void
+				{
                 startSwim();
             }});
         });
