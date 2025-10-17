@@ -16,19 +16,26 @@ class PlayState extends FlxState
 
 	var fishes:Array<Fish> = [];
 	
+	var fishToAdd:Array<String> = ['funny', 'funny', 'funny', 'funny'];
+	var gameHeight:Float = 0;
+	
 	override public function create()
 	{
 		super.create();
-		bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height * 4, 0xFFCFF9F2);
+		bg = new FlxSprite();
 		add(bg);
 		//		FlxColor.gradient(0xFFCFF9F2, 0xFF26394A, FlxG.height * 4, FlxEase.quartOut);
 
-		for (i in 0...10)
+		gameHeight = FlxG.height;
+
+		for (i in 0...fishToAdd.length)
 		{
-			var funnyFish = new Fish('funny', 200 + (400 * i), FlxG.width / 1.5);
+			gameHeight += FlxG.height / 1.5;
+			var funnyFish = new Fish(fishToAdd[i], 200 + (400 * i), FlxG.width / 1.5);
 			add(funnyFish);
 			fishes.push(funnyFish);
 		}
+		bg.makeGraphic(FlxG.width, FlxG.height + Std.int(gameHeight), 0xFFCFF9F2);
 
 		depthSlider = new FlxSlider(this, "depth", FlxG.width - 100, 30, 0, 1, 50, 371, 10);
 		depthSlider.body.loadGraphic('assets/images/slide_bar.png');
@@ -60,7 +67,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, (FlxG.height * 3) * depth, FlxG.elapsed, 6);
+		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, (gameHeight - (FlxG.height / 2)) * depth, FlxG.elapsed, 6);
 		if (currentFish == null)
 		{
 			for (fish in fishes)

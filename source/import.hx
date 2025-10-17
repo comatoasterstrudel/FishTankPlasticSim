@@ -1,4 +1,5 @@
 import Fish;
+import Std;
 import ctDialogueBox.ctdb.CtDialogueBox;
 import flixel.FlxG;
 import flixel.FlxGame;
