@@ -16,7 +16,7 @@ class PlayState extends FlxState
 
 	var fishes:Array<Fish> = [];
 	
-	var fishToAdd:Array<String> = ['funny', 'funny', 'funny', 'funny'];
+	var fishToAdd:Array<String> = ['funny', 'fat', "shark"];
 	var gameHeight:Float = 0;
 	
 	override public function create()
@@ -30,11 +30,32 @@ class PlayState extends FlxState
 
 		for (i in 0...fishToAdd.length)
 		{
+			var moveSpeed:Float = 1;
+
+			switch (fishToAdd[i])
+			{
+				case 'funny':
+					moveSpeed = 1;
+				case 'fat':
+					moveSpeed = 4;
+				case 'shark':
+					moveSpeed = .5;
+			}
+			
 			gameHeight += FlxG.height / 1.5;
-			var funnyFish = new Fish(fishToAdd[i], 200 + (400 * i), FlxG.width / 1.5);
+			var funnyFish = new Fish(fishToAdd[i], 200 + (400 * i), FlxG.width / 1.5, moveSpeed);
 			add(funnyFish);
 			fishes.push(funnyFish);
 		}
+		#if tenthousandfish
+		for (i in 0...10000)
+		{
+			var funnyFish = new Fish('funny', FlxG.random.int(0, 2000), FlxG.width / 1.5, .2);
+			add(funnyFish);
+			fishes.push(funnyFish);
+		}
+		#end
+		
 		bg.makeGraphic(FlxG.width, FlxG.height + Std.int(gameHeight), 0xFFCFF9F2);
 
 		depthSlider = new FlxSlider(this, "depth", FlxG.width - 100, 30, 0, 1, 50, 371, 10);
@@ -67,7 +88,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, (gameHeight - (FlxG.height / 2)) * depth, FlxG.elapsed, 6);
+		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, (gameHeight - (FlxG.height / 1.5)) * depth, FlxG.elapsed, 6);
 		if (currentFish == null)
 		{
 			for (fish in fishes)

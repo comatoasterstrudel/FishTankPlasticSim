@@ -5,11 +5,17 @@ class Fish extends FlxSprite
     var swimRange:Float = 0;
 	public var name:String = '';
     
-    public function new(name:String, y:Float, swimRange:Float):Void{
+	// how fast the fish moves. higher is slowly
+	var moveSpeed:Float = 1;
+
+	public function new(name:String, y:Float, swimRange:Float, moveSpeed:Float):Void
+	{
         super();
         
 		this.name = name;
 
+		this.moveSpeed = moveSpeed;
+        
 		if (Assets.exists('assets/images/fish/$name.png'))
 		{
 			loadGraphic('assets/images/fish/$name.png');
@@ -26,7 +32,8 @@ class Fish extends FlxSprite
     }
     
     function startSwim():Void{   
-        new FlxTimer().start(FlxG.random.float(1, 4), function(f):Void{                     
+		new FlxTimer().start(FlxG.random.float(1, 4) * moveSpeed, function(f):Void
+		{                     
             var middle = FlxG.width / 2 - width / 2;
             
             var left:Bool = FlxG.random.bool(50);
@@ -37,7 +44,7 @@ class Fish extends FlxSprite
 
 			var moveTo:Float = FlxMath.bound(x + (left ? FlxG.random.float(-100, -10) : FlxG.random.float(10, 100)), 0, (FlxG.width - width) - 100);
                     
-			FlxTween.tween(this, {x: moveTo}, FlxG.random.float(1, 4), {
+			FlxTween.tween(this, {x: moveTo}, FlxG.random.float(1, 4) * moveSpeed, {
 				ease: FlxEase.cubeInOut,
 				onComplete: function(f):Void
 				{
