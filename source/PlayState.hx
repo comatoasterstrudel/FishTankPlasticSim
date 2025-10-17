@@ -16,7 +16,7 @@ class PlayState extends FlxState
 
 	var fishes:Array<Fish> = [];
 	
-	var fishToAdd:Array<String> = ['funny', 'fat', "shark"];
+	var fishToAdd:Array<String> = ['funny', 'fat', "shark", "algore"];
 	var gameHeight:Float = 0;
 	
 	override public function create()
