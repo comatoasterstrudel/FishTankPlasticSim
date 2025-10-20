@@ -1,5 +1,8 @@
 package;
 
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxPoint.FlxReadOnlyPoint;
+
 class PlayState extends FlxState
 {
 	var bg:FlxSprite;
@@ -16,20 +19,72 @@ class PlayState extends FlxState
 
 	var fishes:Array<Fish> = [];
 	
-	var fishToAdd:Array<String> = ['funny', 'fat', "shark", "algore"];
+	var fishToAdd:Array<String> = ['', '', '', 'funny', 'fat', "shark", "algore"];
 	var gameHeight:Float = 0;
+	
+	var watertop:FlxBackdrop;
+	var sky:FlxSprite;
+
+	var text1:FlxText;
+	var text2:FlxText;
+	var text3:FlxText;
+
+	var garbagegroup:FlxTypedGroup<FlyingGarbage>;
 	
 	override public function create()
 	{
 		super.create();
+		bgColor = 0xFF454545;
+
+		sky = new FlxSprite().loadGraphic('assets/images/sky.png');
+		sky.scale.y = 2.2;
+		sky.scrollFactor.set(.5, .5);
+		sky.alpha = .7;
+		add(sky);
+
+		text1 = new FlxText(0, 70, 0, 'Welcome to', 30);
+		add(text1);
+
+		text2 = new FlxText(0, 200, 0, 'FishTankPlasticSim', 65);
+		add(text2);
+
+		text3 = new FlxText(0, 350, 0, 'Drag the knob on the right to move through the ocean!\nClick on fish to talk to them!', 20);
+		add(text3);
+
+		for (i in [text1, text2, text3])
+		{
+			i.setFormat('assets/fonts/andy.ttf', i.size, FlxColor.WHITE, CENTER);
+			i.screenCenter(X);
+		}
+		
 		bg = new FlxSprite();
 		add(bg);
 		//		FlxColor.gradient(0xFFCFF9F2, 0xFF26394A, FlxG.height * 4, FlxEase.quartOut);
 
 		gameHeight = FlxG.height;
 
+		watertop = new FlxBackdrop('assets/images/water.png', X);
+		watertop.y = 1000;
+		watertop.velocity.x = 50;
+		add(watertop);
+
+		garbagegroup = new FlxTypedGroup<FlyingGarbage>();
+		add(garbagegroup);
+
+		new FlxTimer().start(FlxG.random.float(.5, 2), function(t):Void
+		{
+			var garbage = new FlyingGarbage(600, watertop.y + watertop.height);
+			garbagegroup.add(garbage);
+			t.reset();
+		});
+		
 		for (i in 0...fishToAdd.length)
 		{
+			gameHeight += FlxG.height / 1.5;
+
+			if (fishToAdd[i] == '')
+				continue;
+			
 			var moveSpeed:Float = 1;
 
 			switch (fishToAdd[i])
@@ -41,8 +96,7 @@ class PlayState extends FlxState
 				case 'shark':
 					moveSpeed = .5;
 			}
-			
-			gameHeight += FlxG.height / 1.5;
+
 			var funnyFish = new Fish(fishToAdd[i], 200 + (400 * i), FlxG.width / 1.5, moveSpeed);
 			add(funnyFish);
 			fishes.push(funnyFish);
@@ -57,6 +111,8 @@ class PlayState extends FlxState
 		#end
 		
 		bg.makeGraphic(FlxG.width, FlxG.height + Std.int(gameHeight), 0xFFCFF9F2);
+		bg.y = watertop.y + watertop.height;
+		watertop.color = 0xFFCFF9F2;
 
 		depthSlider = new FlxSlider(this, "depth", FlxG.width - 100, 30, 0, 1, 50, 371, 10);
 		depthSlider.body.loadGraphic('assets/images/slide_bar.png');
@@ -107,6 +163,7 @@ class PlayState extends FlxState
 		{
 			setDialogueBoxPosition();
 		}
+		sky.alpha = FlxMath.bound((FlxG.camera.scroll.y / 500), .5, 1);
 	}
 
 	function setDialogueBoxPosition(?force:Bool = false):Void
