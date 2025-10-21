@@ -1,7 +1,5 @@
 package;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxPoint.FlxReadOnlyPoint;
 
 class PlayState extends FlxState
 {
@@ -19,7 +17,7 @@ class PlayState extends FlxState
 
 	var fishes:Array<Fish> = [];
 	
-	var fishToAdd:Array<String> = ['', '', '', 'funny', 'fat', "shark", "algore"];
+	var fishToAdd:Array<String> = ['', '', '', 'sad', 'funny'];
 	var gameHeight:Float = 0;
 	
 	var watertop:FlxBackdrop;
@@ -71,9 +69,9 @@ class PlayState extends FlxState
 		garbagegroup = new FlxTypedGroup<FlyingGarbage>();
 		add(garbagegroup);
 
-		new FlxTimer().start(FlxG.random.float(.5, 2), function(t):Void
+		new FlxTimer().start(FlxG.random.float(1, 3), function(t):Void
 		{
-			var garbage = new FlyingGarbage(600, watertop.y + watertop.height);
+			var garbage = new FlyingGarbage(600, watertop.y);
 			garbagegroup.add(garbage);
 			t.reset();
 		});
@@ -89,15 +87,13 @@ class PlayState extends FlxState
 
 			switch (fishToAdd[i])
 			{
-				case 'funny':
+				case 'sad':
+					moveSpeed = .75;
+				default:
 					moveSpeed = 1;
-				case 'fat':
-					moveSpeed = 4;
-				case 'shark':
-					moveSpeed = .5;
 			}
 
-			var funnyFish = new Fish(fishToAdd[i], 200 + (400 * i), FlxG.width / 1.5, moveSpeed);
+			var funnyFish = new Fish(fishToAdd[i], (400 * i), FlxG.width / 1.5, moveSpeed);
 			add(funnyFish);
 			fishes.push(funnyFish);
 		}
@@ -110,9 +106,9 @@ class PlayState extends FlxState
 		}
 		#end
 		
-		bg.makeGraphic(FlxG.width, FlxG.height + Std.int(gameHeight), 0xFFCFF9F2);
+		bg.makeGraphic(FlxG.width, FlxG.height + Std.int(gameHeight), 0xFF99DCFB);
 		bg.y = watertop.y + watertop.height;
-		watertop.color = 0xFFCFF9F2;
+		watertop.color = 0xFF99DCFB;
 
 		depthSlider = new FlxSlider(this, "depth", FlxG.width - 100, 30, 0, 1, 50, 371, 10);
 		depthSlider.body.loadGraphic('assets/images/slide_bar.png');
@@ -123,7 +119,7 @@ class PlayState extends FlxState
 		depthSlider.nameLabel.visible = false;
 		depthSlider.valueLabel.visible = false;
 		add(depthSlider);
-		CtDialogueBox.preloadFont();
+		CtDialogueBox.preloadFont('assets/fonts/andy.ttf', 25);
 		dialogueBox = new CtDialogueBox({
 			pressedAcceptFunction: function():Bool
 			{
@@ -136,7 +132,12 @@ class PlayState extends FlxState
 			onLineAdvance: function(data):Void
 			{
 				dialogueBox.dialogueBox.x = dialogueX;
-			}
+			},
+			boxImgPath: 'diaBox',
+			textFieldWidth: 250,
+			textRows: 3,
+			font: 'assets/fonts/andy.ttf',
+			fontSize: 25
 		});
 		add(dialogueBox);
 	}
@@ -182,9 +183,11 @@ class PlayState extends FlxState
 
 		dialogueBox.dialogueBox.x = dialogueBox.textbox.x = dialogueBox.dialogueBox.x;
 
-		dialogueBox.dialogueBox.y = currentFish.y - 120;
+		dialogueBox.textbox.x += 50;
 
-		dialogueBox.textbox.y = dialogueBox.dialogueBox.y;
+		dialogueBox.dialogueBox.y = currentFish.y - 200;
+
+		dialogueBox.textbox.y = dialogueBox.dialogueBox.y + 35;
 
 		dialogueX = dialogueBox.dialogueBox.x;
 	}
