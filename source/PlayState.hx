@@ -3,8 +3,11 @@ package;
 
 class PlayState extends FlxState
 {
+	public static final RIGHT_SIDE_MARGIN:Int = 100;
+	
 	var bg:FlxSprite;
 
+	var sliderbg:FlxSprite;
 	var depthSlider:FlxSlider;
 
 	var depth:Float = 0;
@@ -46,13 +49,14 @@ class PlayState extends FlxState
 		text2 = new FlxText(0, 200, 0, 'FishTankPlasticSim', 65);
 		add(text2);
 
-		text3 = new FlxText(0, 350, 0, 'Drag the knob on the right to move through the ocean!\nClick on fish to talk to them!', 20);
+		text3 = new FlxText(0, 350, 0, 'Drag the arrow on the right to move through the ocean!\nClick on fish to talk to them!', 20);
 		add(text3);
 
 		for (i in [text1, text2, text3])
 		{
 			i.setFormat('assets/fonts/andy.ttf', i.size, FlxColor.WHITE, CENTER);
 			i.screenCenter(X);
+			i.x -= 25;
 		}
 		
 		bg = new FlxSprite();
@@ -110,9 +114,16 @@ class PlayState extends FlxState
 		bg.y = watertop.y + watertop.height;
 		watertop.color = 0xFF99DCFB;
 
-		depthSlider = new FlxSlider(this, "depth", FlxG.width - 100, 30, 0, 1, 50, 371, 10);
+		sliderbg = new FlxSprite().loadGraphic('assets/images/slide_bg.png');
+		sliderbg.screenCenter();
+		sliderbg.scrollFactor.set(0, 0);
+		add(sliderbg);
+
+		depthSlider = new FlxSlider(this, "depth", FlxG.width - 70, 30, 0, 1, 80, 409, 10);
+		depthSlider.hoverAlpha = 1;
 		depthSlider.body.loadGraphic('assets/images/slide_bar.png');
 		depthSlider.handle.loadGraphic('assets/images/slide_handle.png');
+		depthSlider.handle.x = depthSlider.body.x + depthSlider.body.width / 2 - depthSlider.handle.width / 2;
 		depthSlider.scrollFactor.set(0, 0);
 		depthSlider.maxLabel.visible = false;
 		depthSlider.minLabel.visible = false;

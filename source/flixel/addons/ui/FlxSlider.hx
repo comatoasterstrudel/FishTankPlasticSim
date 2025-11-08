@@ -236,6 +236,7 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 		handle = new FlxSprite(offset.x, offset.y);
 		handle.makeGraphic(_width, _thickness, _handleColor);
 		handle.scrollFactor.set();
+		handle.x = body.x + body.width / 2 - handle.width / 2;
 
 		// Creating the texts
 		nameLabel = new FlxText(offset.x, 0, _width, varString);
@@ -302,7 +303,7 @@ class FlxSlider extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCon
 			{
 				updateValue();
 				handle.x = body.x + body.width / 2 - handle.width / 2;
-				handle.y = viewY;
+				handle.y = viewY - 16;
 				#if FLX_SOUND_SYSTEM
 				if (clickSound != null && !_justClicked)
 				{
