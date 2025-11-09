@@ -36,20 +36,30 @@ class PlayState extends FlxState
 		'hopeful', // smiling but fucked up fish
 		'',
 		'',
-		''
 	];
 	var gameHeight:Float = 0;
 	
 	var watertop:FlxBackdrop;
+
 	var sky:FlxSprite;
+	var clouds:FlxSprite;
+
+	var bottomBg:FlxSprite;
+	var bottomBg2:FlxSprite;
+	var bottomBg3:FlxSprite;
 
 	var text1:FlxText;
 	var text2:FlxText;
 	var text3:FlxText;
 
+	var text4:FlxText;
+	var text5:FlxText;
+
 	var garbagegroup:FlxTypedGroup<FlyingGarbage>;
 
 	var bgGarbage:Array<BgGarbage> = [];
+	
+	var watershaders:Array<WaterShader> = [];
 	
 	override public function create()
 	{
@@ -62,27 +72,31 @@ class PlayState extends FlxState
 		sky.alpha = .7;
 		add(sky);
 
-		text1 = new FlxText(0, 70, 0, 'Welcome to', 30);
+		clouds = new FlxSprite().loadGraphic('assets/images/clouds.png');
+		clouds.scale.y = 1.5;
+		clouds.updateHitbox();
+		clouds.y = 0;
+		clouds.scrollFactor.set(.4, .4);
+		clouds.alpha = .2;
+		clouds.antialiasing = true;
+		add(clouds);
+
+		text1 = new FlxText(0, 40, 0, 'Welcome to', 30);
 		add(text1);
 
-		text2 = new FlxText(0, 200, 0, 'FishTankPlasticSim', 65);
+		text2 = new FlxText(0, 170, 0, 'FishTankPlasticSim', 65);
 		add(text2);
 
-		text3 = new FlxText(0, 350, 0, 'Drag the arrow on the right to move through the ocean!\nClick on fish to talk to them!', 20);
+		text3 = new FlxText(0, 310, 0, 'Drag the arrow on the right to move through the ocean!\n
+			Click on fish to talk to them!\n
+			Click on text boxes to advance them!', 20);
 		add(text3);
 
-		for (i in [text1, text2, text3])
-		{
-			i.setFormat('assets/fonts/andy.ttf', i.size, FlxColor.WHITE, CENTER);
-			i.screenCenter(X);
-			i.x -= 25;
-		}
-		
 		bg = new FlxSprite();
 		add(bg);
 		//		FlxColor.gradient(0xFFCFF9F2, 0xFF26394A, FlxG.height * 4, FlxEase.quartOut);
 
-		gameHeight = FlxG.height;
+		gameHeight = FlxG.height + 100;
 
 		watertop = new FlxBackdrop('assets/images/water.png', X);
 		watertop.y = 1000;
@@ -112,11 +126,19 @@ class PlayState extends FlxState
 			{
 				case 'sad':
 					moveSpeed = .75;
+				case 'collector':
+					moveSpeed = 4;
+				case 'nerd':
+					moveSpeed = .5;
+				case 'weird':
+					moveSpeed = .25;
+				case 'historic':
+					moveSpeed = 10;
 				default:
 					moveSpeed = 1;
 			}
 
-			var funnyFish = new Fish(fishToAdd[i], (400 * i), FlxG.width / 1.5, moveSpeed);
+			var funnyFish = new Fish(fishToAdd[i], (400 * i) + 100, FlxG.width / 1.5, moveSpeed);
 			fishes.push(funnyFish);
 		}
 		#if tenthousandfish
@@ -127,13 +149,27 @@ class PlayState extends FlxState
 			fishes.push(funnyFish);
 		}
 		#end
-		var garbageLayer3 = new BgGarbage('assets/images/garbageBg_3.png', 2000, 3200);
+		gameHeight += 200;
+
+		bottomBg3 = new FlxSprite().loadGraphic('assets/images/bottomgarbage3.png');
+		bottomBg3.scrollFactor.set(1, 0.1);
+		add(bottomBg3);
+
+		bottomBg2 = new FlxSprite().loadGraphic('assets/images/bottomgarbage2.png');
+		bottomBg2.scrollFactor.set(1, 0.2);
+		add(bottomBg2);
+
+		bottomBg = new FlxSprite().loadGraphic('assets/images/bottomgarbage.png');
+		bottomBg.scrollFactor.set(1, 0.4);
+		add(bottomBg);
+
+		var garbageLayer3 = new BgGarbage('assets/images/garbageBg_3.png', 1200, 2400);
 		add(garbageLayer3);
 
-		var garbageLayer2 = new BgGarbage('assets/images/garbageBg_2.png', 3400, 4100);
+		var garbageLayer2 = new BgGarbage('assets/images/garbageBg_2.png', 2800, 3500);
 		add(garbageLayer2);
 
-		var garbageLayer1 = new BgGarbage('assets/images/garbageBg_1.png', 4300, 5000);
+		var garbageLayer1 = new BgGarbage('assets/images/garbageBg_1.png', 3700, 4300);
 		add(garbageLayer1);
 
 		bgGarbage = [garbageLayer1, garbageLayer2, garbageLayer3];
@@ -147,25 +183,29 @@ class PlayState extends FlxState
 
 		bg.loadGraphic(FlxGradient.createGradientBitmapData(FlxG.width, trueheight, FlxColor.gradient(0xFF99DCFB, 0xFF050708, 200)));
 		bg.y = watertop.y + watertop.height;
+
 		watertop.color = 0xFF99DCFB;
 
-		sliderbg = new FlxSprite().loadGraphic('assets/images/slide_bg.png');
-		sliderbg.screenCenter();
-		sliderbg.scrollFactor.set(0, 0);
-		add(sliderbg);
+		text4 = new FlxText(0, gameHeight - 200, 0, 'Thank you for playing!', 50);
+		add(text4);
 
-		depthSlider = new FlxSlider(this, "depth", FlxG.width - 70, 30, 0, 1, 80, 409, 10);
-		depthSlider.hoverAlpha = 1;
-		depthSlider.body.loadGraphic('assets/images/slide_bar.png');
-		depthSlider.handle.loadGraphic('assets/images/slide_handle.png');
-		depthSlider.handle.x = depthSlider.body.x + depthSlider.body.width / 2 - depthSlider.handle.width / 2;
-		depthSlider.scrollFactor.set(0, 0);
-		depthSlider.maxLabel.visible = false;
-		depthSlider.minLabel.visible = false;
-		depthSlider.nameLabel.visible = false;
-		depthSlider.valueLabel.visible = false;
-		add(depthSlider);
+		text5 = new FlxText(0, text4.y + 150, 0, 'I hope you learned something!!', 30);
+		add(text5);
+
+		for (i in [text1, text2, text3, text4, text5])
+		{
+			i.setFormat('assets/fonts/andy.ttf', i.size, FlxColor.WHITE, CENTER, SHADOW, 0xFF043544);
+			i.borderSize = 4;
+			i.screenCenter(X);
+			i.x -= 25;
+		}
+
+		bottomBg.y = (text4.y - 50) * bottomBg.scrollFactor.y;
+		bottomBg2.y = (text4.y - 50) * bottomBg2.scrollFactor.y;
+		bottomBg3.y = (text4.y - 50) * bottomBg3.scrollFactor.y;
+
 		CtDialogueBox.preloadFont('assets/fonts/andy.ttf', 21);
+
 		dialogueBox = new CtDialogueBox({
 			pressedAcceptFunction: function():Bool
 			{
@@ -183,15 +223,39 @@ class PlayState extends FlxState
 			textFieldWidth: 360,
 			textRows: 4,
 			font: 'assets/fonts/andy.ttf',
-			fontSize: 21
+			fontSize: 21,
 		});
 		add(dialogueBox);
+		sliderbg = new FlxSprite().loadGraphic('assets/images/slide_bg.png');
+		sliderbg.screenCenter();
+		sliderbg.scrollFactor.set(0, 0);
+		add(sliderbg);
+
+		depthSlider = new FlxSlider(this, "depth", FlxG.width - 70, 30, 0, 1, 80, 409, 10);
+		depthSlider.hoverAlpha = 1;
+		depthSlider.body.loadGraphic('assets/images/slide_bar.png');
+		depthSlider.handle.loadGraphic('assets/images/slide_handle.png');
+		depthSlider.handle.x = depthSlider.body.x + depthSlider.body.width / 2 - depthSlider.handle.width / 2;
+		depthSlider.scrollFactor.set(0, 0);
+		depthSlider.maxLabel.visible = false;
+		depthSlider.minLabel.visible = false;
+		depthSlider.nameLabel.visible = false;
+		depthSlider.valueLabel.visible = false;
+		add(depthSlider);
+
+		addWaterShader(garbageLayer3, 30);
+		addWaterShader(garbageLayer2, 60);
+		addWaterShader(garbageLayer1, 100);
+		addWaterShader(bottomBg, 80);
+		addWaterShader(garbageLayer1, 50);
+		addWaterShader(garbageLayer1, 30);
+
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, (gameHeight - (FlxG.height / 1.5)) * depth, FlxG.elapsed, 6);
+		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, FlxMath.bound((gameHeight - (FlxG.height / 1.5)) * depth, 0, null), FlxG.elapsed, 6);
 		for (i in bgGarbage)
 		{
 			i.updateValue(FlxG.camera.scroll.y);
@@ -215,6 +279,11 @@ class PlayState extends FlxState
 			setDialogueBoxPosition();
 		}
 		sky.alpha = FlxMath.bound((FlxG.camera.scroll.y / 500), .5, 1);
+		clouds.alpha = FlxMath.bound((FlxG.camera.scroll.y / 500), .1, .2);
+		for (i in watershaders)
+		{
+			i.update(elapsed);
+		}
 	}
 
 	function setDialogueBoxPosition(?force:Bool = false):Void
@@ -237,7 +306,7 @@ class PlayState extends FlxState
 
 		dialogueBox.dialogueBox.y = currentFish.y - 200;
 
-		dialogueBox.textbox.y = dialogueBox.dialogueBox.y + 35;
+		dialogueBox.textbox.y = dialogueBox.dialogueBox.y + 50;
 
 		dialogueX = dialogueBox.dialogueBox.x;
 	}
@@ -245,5 +314,11 @@ class PlayState extends FlxState
 	public static function lerpThing(initialnum:Float, target:Float, elapsed:Float, speed:Float = 15):Float
 	{
 		return FlxMath.lerp(target, initialnum, FlxMath.bound(1 - (elapsed * speed), 0, 1));
+	}
+	function addWaterShader(sprite:FlxSprite, intensity:Int):Void
+	{
+		var shader = new WaterShader(intensity);
+		sprite.shader = shader;
+		watershaders.push(shader);
 	}
 }
