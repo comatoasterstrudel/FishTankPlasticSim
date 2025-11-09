@@ -16,7 +16,7 @@ class FlyingGarbage extends FlxSpriteGroup
         this.starty = starty;
         this.endy = endy;
         
-        garbage = new FlxSprite().loadGraphic('assets/images/garbage_${FlxG.random.int(1,3)}.png');
+		garbage = new FlxSprite().loadGraphic('assets/images/garbage_${FlxG.random.int(1, 4)}.png');
         add(garbage);
         
         garbage.x = FlxG.random.float(0, (FlxG.width - 105) - width);

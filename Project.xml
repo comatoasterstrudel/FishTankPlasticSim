@@ -89,4 +89,6 @@
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here-->
+	
+	<icon path="assets/images/fish/funny.png" />
 </project>

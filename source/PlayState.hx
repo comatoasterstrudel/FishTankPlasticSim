@@ -163,7 +163,7 @@ class PlayState extends FlxState
 		bottomBg.scrollFactor.set(1, 0.4);
 		add(bottomBg);
 
-		var garbageLayer3 = new BgGarbage('assets/images/garbageBg_3.png', 1200, 2400);
+		var garbageLayer3 = new BgGarbage('assets/images/garbageBg_3.png', 900, 2200);
 		add(garbageLayer3);
 
 		var garbageLayer2 = new BgGarbage('assets/images/garbageBg_2.png', 2800, 3500);
