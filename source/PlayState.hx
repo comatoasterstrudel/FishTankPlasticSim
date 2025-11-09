@@ -20,7 +20,24 @@ class PlayState extends FlxState
 
 	var fishes:Array<Fish> = [];
 	
-	var fishToAdd:Array<String> = ['', '', '', 'sad', 'funny'];
+	var fishToAdd:Array<String> = [
+		'',
+		'',
+		'',
+		'sad', // frowning fish
+		'observing', // fish with a monocle
+		'collector', // turtle
+		'nerd', // shrimp
+		'chef', // squid
+		'historic', // blue crab
+		'pessimistic', // huge fucking shark
+		'weird', // angler fish
+		'preventative', // jellyfish
+		'hopeful', // smiling but fucked up fish
+		'',
+		'',
+		''
+	];
 	var gameHeight:Float = 0;
 	
 	var watertop:FlxBackdrop;
@@ -110,7 +127,9 @@ class PlayState extends FlxState
 		}
 		#end
 		
-		bg.makeGraphic(FlxG.width, FlxG.height + Std.int(gameHeight), 0xFF99DCFB);
+		var trueheight = FlxG.height + Std.int(gameHeight);
+
+		bg.loadGraphic(FlxGradient.createGradientBitmapData(FlxG.width, trueheight, FlxColor.gradient(0xFF99DCFB, 0xFF050708, 200)));
 		bg.y = watertop.y + watertop.height;
 		watertop.color = 0xFF99DCFB;
 
@@ -130,7 +149,7 @@ class PlayState extends FlxState
 		depthSlider.nameLabel.visible = false;
 		depthSlider.valueLabel.visible = false;
 		add(depthSlider);
-		CtDialogueBox.preloadFont('assets/fonts/andy.ttf', 25);
+		CtDialogueBox.preloadFont('assets/fonts/andy.ttf', 21);
 		dialogueBox = new CtDialogueBox({
 			pressedAcceptFunction: function():Bool
 			{
@@ -145,10 +164,10 @@ class PlayState extends FlxState
 				dialogueBox.dialogueBox.x = dialogueX;
 			},
 			boxImgPath: 'diaBox',
-			textFieldWidth: 250,
-			textRows: 3,
+			textFieldWidth: 360,
+			textRows: 4,
 			font: 'assets/fonts/andy.ttf',
-			fontSize: 25
+			fontSize: 21
 		});
 		add(dialogueBox);
 	}
