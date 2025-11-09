@@ -48,6 +48,8 @@ class PlayState extends FlxState
 	var text3:FlxText;
 
 	var garbagegroup:FlxTypedGroup<FlyingGarbage>;
+
+	var bgGarbage:Array<BgGarbage> = [];
 	
 	override public function create()
 	{
@@ -115,7 +117,6 @@ class PlayState extends FlxState
 			}
 
 			var funnyFish = new Fish(fishToAdd[i], (400 * i), FlxG.width / 1.5, moveSpeed);
-			add(funnyFish);
 			fishes.push(funnyFish);
 		}
 		#if tenthousandfish
@@ -126,6 +127,21 @@ class PlayState extends FlxState
 			fishes.push(funnyFish);
 		}
 		#end
+		var garbageLayer3 = new BgGarbage('assets/images/garbageBg_3.png', 2000, 3200);
+		add(garbageLayer3);
+
+		var garbageLayer2 = new BgGarbage('assets/images/garbageBg_2.png', 3400, 4100);
+		add(garbageLayer2);
+
+		var garbageLayer1 = new BgGarbage('assets/images/garbageBg_1.png', 4300, 5000);
+		add(garbageLayer1);
+
+		bgGarbage = [garbageLayer1, garbageLayer2, garbageLayer3];
+
+		for (i in fishes)
+		{
+			add(i);
+		}
 		
 		var trueheight = FlxG.height + Std.int(gameHeight);
 
@@ -176,6 +192,10 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		FlxG.camera.scroll.y = lerpThing(FlxG.camera.scroll.y, (gameHeight - (FlxG.height / 1.5)) * depth, FlxG.elapsed, 6);
+		for (i in bgGarbage)
+		{
+			i.updateValue(FlxG.camera.scroll.y);
+		}
 		if (currentFish == null)
 		{
 			for (fish in fishes)

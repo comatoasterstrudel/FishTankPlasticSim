@@ -1,3 +1,4 @@
+import BgGarbage;
 import Fish;
 import Std;
 import ctDialogueBox.ctdb.CtDialogueBox;
